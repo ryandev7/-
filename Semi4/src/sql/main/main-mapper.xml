@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>메인 관련 쿼리문들</comment>
+	
+	<entry key="selectRankList">
+	SELECT PE_TITLE, NICKNAME, PE_LIKECOUNT, PE_NO
+	  FROM RECIPE
+	  JOIN MEMBER ON (PE_WRITER = USER_ID)
+	 WHERE BOARD_TYPE = 2
+       AND PE_STATUS = 'Y'
+	 ORDER BY PE_LIKECOUNT DESC
+	</entry>
+
+	<entry key="selectRecipanList">
+ 	SELECT PE_NO, FILE_PATH, CHANGE_NAME
+     FROM ATTACHMENT
+      JOIN RECIPE USING(PE_NO)
+    WHERE PE_NO IS NOT NULL
+      AND PE_STATUS = 'Y'
+      AND FILE_LEVEL = 1
+    ORDER BY UPLOAD_DATE DESC
+	</entry>
+</properties>

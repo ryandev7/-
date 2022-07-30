@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+
+	<entry key="insertReview">
+		INSERT INTO REVIEW(RV_NO, RV_TITLE, RV_CONTENT, CREATE_DATE, MODIFY_DATE,
+						   STATUS, RV_WRITER, RV_PRO)
+						   
+		VALUES (SEQ_RV_NO.NEXTVAL, ?, ?, DEFAULT, DEFAULT, DEFAULT, ?, ?)
+	</entry>
+	
+	<entry key="insertReviewAttachment">
+        INSERT INTO ATTACHMENT(FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH, RV_NO, PRODUCT_NO, FILE_LEVEL)
+		VALUES (SEQ_FILE_NO.NEXTVAL, ?, ?, ?, SEQ_RV_NO.CURRVAL, ?, 2)
+	</entry>
+
+	<!-- 카테고리 리스트 보여주는 SQL문 -->
+	<entry key="selectCategoryList">
+		SELECT PRO_CAT_NO, CATE_VALUE
+	 	  FROM PRO_CATEGORY
+	</entry>
+	
+	<!-- 식재료 등록하는 SQL문 -->
+	<entry key="insertProduct">
+		INSERT INTO PRODUCT(PR_NO, PR_NAME, PR_INTRODUCE, PRO_CAT_NO, PR_WEIGHT, PR_ORIGIN, PR_PRICE, PR_CONTENT)
+		VALUES(SEQ_PR_NO.NEXTVAL, ?, ?, ?, ?, ?, ?, ?)
+	</entry>
+	
+	<!-- 식재료 게시판의 사진 등록하는 SQL문 -->
+	<entry key="insertAttachmentList">
+		INSERT INTO ATTACHMENT(FILE_NO, PRODUCT_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH, FILE_LEVEL)
+		VALUES(SEQ_FILE_NO.NEXTVAL, SEQ_PR_NO.CURRVAL, ?, ?, ?, ?)
+	</entry>
+	
+	<entry key="insertAttachment">
+        INSERT INTO ATTACHMENT(FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH, RV_NO)
+		VALUES (SEQ_FILE_NO.NEXTVAL, ?, ?, ?, 1)
+	</entry>
+	
+	<!-- 총 몇개의 게시글인지 보여주는 SQL문 -->
+	<entry key="selectListCount">
+		SELECT COUNT(*) COUNT
+		  FROM PRODUCT
+ 	     WHERE STATUS='Y'
+	</entry>
+	
+	<!-- 리스트 보여주는 SQL문 -->
+	<entry key="selectList">
+	SELECT *
+	  FROM (SELECT ROWNUM RNUM, A.*
+              FROM (SELECT PR_NAME, FILE_PATH||CHANGE_NAME TITLEIMG, PR_NO
+                      FROM PRODUCT P
+                      JOIN ATTACHMENT ON (PR_NO = PRODUCT_NO)
+               		 WHERE P.STATUS = 'Y'
+               		   AND FILE_LEVEL = 1
+               	     ORDER BY CREATE_DATE DESC) A)
+     WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectProduct">
+		SELECT PR_NO, PR_NAME, PR_INTRODUCE, PR_WEIGHT, PR_PRICE, PR_ORIGIN, PR_CONTENT, PR_LIKECOUNT, PRO_CAT_NO
+		  FROM PRODUCT
+		  WHERE PR_NO = ?
+		    AND STATUS = 'Y'
+	</entry>
+
+	<!-- 수정전 사항 가져오기 (수정함)-->
+	<entry key="selectProductList">
+		SELECT PR_NO, PR_NAME, PR_INTRODUCE, CATE_VALUE, PR_WEIGHT, PR_ORIGIN, PR_PRICE, PR_CONTENT, PRO_CAT_NO
+		  FROM PRODUCT P
+		  LEFT JOIN PRO_CATEGORY USING (PRO_CAT_NO)
+		 WHERE PR_NO = ?
+		   AND P.STATUS = 'Y'
+	</entry>
+	
+	<entry key="selectAttachment">
+		SELECT PR_NO, FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH
+		  FROM ATTACHMENT
+		  JOIN PRODUCT ON (PRODUCT_NO = PR_NO)
+		 WHERE PR_NO = ? 
+	</entry>
+	
+	<!-- 야채/채소의 게시글 수 -->
+	<entry key="selectVegetableListCount">
+		SELECT COUNT(*) COUNT
+		  FROM PRODUCT
+ 	     WHERE STATUS='Y'
+ 	       AND PRO_CAT_NO = 1
+	</entry>
+
+
+	<!-- 리스트(야채/채소) 보여주는 SQL문 -->
+	<entry key="selectVegetableList">
+	SELECT *
+	  FROM (SELECT ROWNUM RNUM, A.*
+              FROM (SELECT PR_NAME, FILE_PATH||CHANGE_NAME TITLEIMG, PR_NO
+                      FROM PRODUCT P
+                      JOIN ATTACHMENT ON (PR_NO = PRODUCT_NO)
+               		 WHERE P.STATUS = 'Y'
+               		   AND FILE_LEVEL = 1
+               		   AND PRO_CAT_NO = 1
+               	     ORDER BY CREATE_DATE DESC) A)
+     WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+		<!-- 과일의 게시글 수 -->
+	<entry key="selectFruitListCount">
+		SELECT COUNT(*) COUNT
+		  FROM PRODUCT
+ 	     WHERE STATUS='Y'
+ 	       AND PRO_CAT_NO = 2
+	</entry>
+
+	<!-- 리스트(과일) 보여주는 SQL문 -->
+	<entry key="selectFruitList">
+	SELECT *
+	  FROM (SELECT ROWNUM RNUM, A.*
+              FROM (SELECT PR_NAME, FILE_PATH||CHANGE_NAME TITLEIMG, PR_NO
+                      FROM PRODUCT P
+                      JOIN ATTACHMENT ON (PR_NO = PRODUCT_NO)
+               		 WHERE P.STATUS = 'Y'
+               		   AND FILE_LEVEL = 1
+               		   AND PRO_CAT_NO = 2
+               	     ORDER BY CREATE_DATE DESC) A)
+     WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<!-- 해/수산의 게시글 수 -->
+	<entry key="selectSeaListCount">
+		SELECT COUNT(*) COUNT
+		  FROM PRODUCT
+ 	     WHERE STATUS='Y'
+ 	       AND PRO_CAT_NO = 3
+	</entry>
+	
+	<!-- 리스트(해/수산) 보여주는 SQL문 -->
+	<entry key="selectSeaList">
+	SELECT *
+	  FROM (SELECT ROWNUM RNUM, A.*
+              FROM (SELECT PR_NAME, FILE_PATH||CHANGE_NAME TITLEIMG, PR_NO
+                      FROM PRODUCT P
+                      JOIN ATTACHMENT ON (PR_NO = PRODUCT_NO)
+               		 WHERE P.STATUS = 'Y'
+               		   AND FILE_LEVEL = 1
+               		   AND PRO_CAT_NO = 3
+               	     ORDER BY CREATE_DATE DESC) A)
+     WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<!-- 정육/계란의 게시글 수 -->
+	<entry key="selectMeatListCount">
+		SELECT COUNT(*) COUNT
+		  FROM PRODUCT
+ 	     WHERE STATUS='Y'
+ 	       AND PRO_CAT_NO = 4
+	</entry>
+	
+	<!-- 리스트(정육/계란) 보여주는 SQL문 -->
+	<entry key="selectMeatList">
+	SELECT *
+	  FROM (SELECT ROWNUM RNUM, A.*
+              FROM (SELECT PR_NAME, FILE_PATH||CHANGE_NAME TITLEIMG, PR_NO
+                      FROM PRODUCT P
+                      JOIN ATTACHMENT ON (PR_NO = PRODUCT_NO)
+               		 WHERE P.STATUS = 'Y'
+               		   AND FILE_LEVEL = 1
+               		   AND PRO_CAT_NO = 4
+               	     ORDER BY CREATE_DATE DESC) A)
+     WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<!-- 기타의 게시글 수 -->	
+	<entry key="selectEtcListCount">
+		SELECT COUNT(*) COUNT
+		  FROM PRODUCT
+ 	     WHERE STATUS='Y'
+ 	       AND PRO_CAT_NO = 5
+	</entry>
+	
+	<!-- 리스트(기타) 보여주는 SQL문 -->
+	<entry key="selectEtcList">
+	SELECT *
+	  FROM (SELECT ROWNUM RNUM, A.*
+              FROM (SELECT PR_NAME, FILE_PATH||CHANGE_NAME TITLEIMG, PR_NO
+                      FROM PRODUCT P
+                      JOIN ATTACHMENT ON (PR_NO = PRODUCT_NO)
+               		 WHERE P.STATUS = 'Y'
+               		   AND FILE_LEVEL = 1
+               		   AND PRO_CAT_NO = 5
+               	     ORDER BY CREATE_DATE DESC) A)
+     WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+		<!-- 수정하기 -->
+	<entry key="updateProduct">
+		UPDATE PRODUCT
+		   SET PR_NAME = ?,
+		       PR_INTRODUCE = ?,
+		       PRO_CAT_NO = ?,
+		       PR_WEIGHT = ?,
+		       PR_ORIGIN = ?,
+		       PR_PRICE = ?,
+		       PR_CONTENT = ?
+		 WHERE PR_NO = ?
+	</entry>
+	
+	<!-- 수정하기(사진) -->
+	<entry key="updateAttachment">
+	UPDATE ATTACHMENT
+	   SET ORIGIN_NAME = ?,
+	       CHANGE_NAME = ?,
+	       FILE_PATH = ?,
+	       UPLOAD_DATE = SYSDATE
+	 WHERE FILE_NO = ?
+	   AND STATUS = 'Y'
+	</entry>
+	
+	
+		<entry key="selectTitleAttachment">
+		SELECT FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH
+		  FROM ATTACHMENT
+		 WHERE PRODUCT_NO = ?
+		   AND FILE_LEVEL = 1
+	</entry>
+	
+	<entry key="selectContentAttachment">
+		SELECT FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH, RV_NO
+		  FROM ATTACHMENT
+		 WHERE PRODUCT_NO = ?
+		   AND FILE_LEVEL = 2
+	</entry>
+	
+	<entry key="selectReviewList">
+   		SELECT *
+          FROM (SELECT ROWNUM RNUM, A.* 
+                  FROM (SELECT RV_NO, RV_TITLE, RV_CONTENT, SUBSTR(USER_NAME, 1, 1)||LPAD('*', LENGTH(USER_NAME)-2, '*') || SUBSTR(USER_NAME, LENGTH(USER_NAME), 1) USER_NAME , R.CREATE_DATE
+                          FROM REVIEW R
+                          JOIN MEMBER ON (RV_WRITER = USER_ID)
+                          WHERE RV_PRO = ?
+                            AND R.STATUS = 'Y'
+                          ORDER BY RV_NO DESC) A)
+         WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key = "selectReviewCount">
+	SELECT COUNT(*) COUNT
+	  FROM REVIEW
+        WHERE RV_PRO = ?
+          AND STATUS = 'Y'
+	
+	</entry>
+	
+	<entry key = "selectReviewAttachment">
+		SELECT FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH, RV_NO
+		  FROM ATTACHMENT
+		 WHERE PRODUCT_NO = ?
+		   AND FILE_LEVEL = 2
+		   AND RV_NO IS NOT NULL
+		 ORDER BY RV_NO DESC
+	</entry>
+	
+	<entry key="insertQna">
+		INSERT INTO QNA(QNA_NO, QNA_TITLE, QNA_CONTENT, CREATE_DATE, MODIFY_DATE,
+						   STATUS, QNA_WRITER, PRODUCT_NO, QNA_ANSWER_ST)
+						   
+		VALUES (SEQ_QNA_NO.NEXTVAL, ?, ?, SYSDATE, SYSDATE, DEFAULT, ?, ?, DEFAULT)
+	</entry>
+	
+	<entry key="selectQnaCount">
+		SELECT COUNT(*) COUNT
+	 	 FROM QNA
+        WHERE PRODUCT_NO = ?
+          AND STATUS = 'Y'
+	</entry>
+	
+	<entry key="selectQnaList">
+	   		SELECT *
+          FROM (SELECT ROWNUM RNUM, A.* 
+                  FROM (SELECT QNA_NO, QNA_TITLE, QNA_CONTENT, 
+                  		SUBSTR(USER_NAME, 1, 1)||LPAD('*', LENGTH(USER_NAME)-2, '*') || SUBSTR(USER_NAME, LENGTH(USER_NAME), 1) USER_NAME , 
+                  		Q.CREATE_DATE, QNA_ANSWER_ST
+                          FROM QNA Q
+                          JOIN MEMBER ON (QNA_WRITER = USER_ID)
+                          WHERE PRODUCT_NO = ?
+                            AND Q.STATUS = 'Y'
+                          ORDER BY QNA_NO DESC) A)
+         WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectRecipeNo">
+		SELECT PE_NO
+		  FROM RECIPE_PRODUCT
+		 WHERE PRO_NAME = ?
+	</entry>
+	
+	<entry key="selectRecipeAttachment">
+		SELECT FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH, PE_NO
+		  FROM ATTACHMENT
+	     WHERE PE_NO = ?
+	       AND FILE_LEVEL = 1
+	</entry>
+	
+	<entry key="deleteReview">
+		UPDATE REVIEW
+		   SET STATUS = 'N'
+		 WHERE RV_NO = ?
+	</entry>
+	
+	<entry key="deleteQna">
+		UPDATE QNA
+		   SET STATUS = 'N'
+		 WHERE QNA_NO = ?
+	</entry>
+	
+	<entry key="selectQna">
+		SELECT QNA_TITLE, QNA_CONTENT, CREATE_DATE
+		  FROM QNA
+		WHERE QNA_NO = ?
+	</entry>
+	
+	<entry key="insertAns">
+		INSERT INTO QNA_ANSWER(QNA_NO, ANS_WRITER, ANS_CONTENT, CREATE_DATE, MODIFY_DATE,
+						   STATUS)
+		VALUES (?, DEFAULT, ?, SYSDATE, NULL, DEFAULT)
+	</entry>
+	
+	<entry key="ansComplete">
+		UPDATE QNA
+		   SET QNA_ANSWER_ST = 'Y'
+		 WHERE QNA_NO = ?
+	</entry>
+	
+	<entry key="selectAnsList">
+		SELECT QNA_NO, ANS_CONTENT, CREATE_DATE
+		  FROM QNA_ANSWER
+		 WHERE QNA_NO = ?
+		   AND STATUS = 'Y'
+	</entry>
+	
+	<entry key="deleteProduct">
+		UPDATE PRODUCT
+		   SET STATUS = 'N'
+		 WHERE PR_NO = ?
+	</entry>
+	
+
+
+</properties>

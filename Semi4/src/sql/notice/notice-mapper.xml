@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>공지사항 쿼리문</comment>
+	
+	<!-- 공지사항 등록하는 SQL문 -->
+	<entry key="insertNotice">
+	INSERT INTO
+				 NOTICE
+				 (
+				 NOTICE_NO, 
+				 NOTICE_TITLE, 
+				 NOTICE_CONTENT,
+				 NOTICE_WRITER 
+				 )
+			VALUES
+				(
+				SEQ_NOTICE_NO.NEXTVAL, 
+				?, 
+				?,
+				?)
+	</entry>
+	
+	<!-- 공지사항 리스트 보여주는 SQL문 -->
+	<entry key="selectNoticeList">
+	SELECT *
+		FROM(SELECT ROWNUM RNUM, A.*
+	    FROM (SELECT NOTICE_NO, NOTICE_TITLE,  NOTICE_CONTENT, NOTICE_COUNT, N.CREATE_DATE, N.MODIFY_DATE, N.STATUS, NOTICE_WRITER
+              FROM NOTICE N
+              JOIN MEMBER ON (USER_ID = NOTICE_WRITER)
+              WHERE N.STATUS = 'Y'
+              ORDER BY NOTICE_NO DESC) A)
+		WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<!-- 공지사항 게시글의 정보를 보여주는 SQL문 -->
+	<entry key="selectNotice">
+	SELECT 
+			   NOTICE_NO, 
+			   NOTICE_TITLE, 
+			   NOTICE_CONTENT, 
+			   NOTICE_WRITER, 
+			   N.CREATE_DATE
+		  FROM 
+		  	   NOTICE N
+		  JOIN 
+		       MEMBER ON (NOTICE_WRITER = USER_ID)
+		 WHERE 
+		       NOTICE_NO = ?
+		   AND 
+		       N.STATUS = 'Y'
+	</entry>
+	
+	<!-- 공지사항 게시글의 상태를 삭제로 변경해주는 SQL문 -->
+	<entry key="deleteNotice">
+	UPDATE
+		 NOTICE 
+	SET 
+		STATUS = 'N' 
+	WHERE 
+		NOTICE_NO = ?
+	</entry>
+	
+	<!-- 공지사항 게시글을 수정해주는 SQL문 -->
+	<entry key="updateNotice">
+		UPDATE 
+			   NOTICE
+		   SET
+		       NOTICE_TITLE = ?,
+		       NOTICE_CONTENT = ?
+		 WHERE
+		       NOTICE_NO = ?
+		   AND
+		       STATUS = 'Y'
+	</entry>
+	
+	<!-- 몇개의 게시글인지 보여주는 SQL문 -->
+	<entry key = "selectListCount">
+		SELECT COUNT(*) COUNT
+		FROM NOTICE
+	</entry>
+    
+
+
+</properties>

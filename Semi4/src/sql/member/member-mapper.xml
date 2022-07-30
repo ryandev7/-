@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>회원 관련 쿼리문들</comment>
+	
+	<entry key="loginMember">
+		SELECT 
+		       USER_ID,
+		       USER_PWD,
+		       USER_NAME,
+		       EMAIL,
+		       ADDRESS,
+		       PHONE,
+		       NICKNAME,
+		       COOK_LEVEL,
+		       CREATE_DATE,
+		       MODIFY_DATE,
+		       STATUS,
+		       NAT_VALUE
+		  FROM
+		       MEMBER
+		  JOIN 
+		  	   NAT_CATEGORY ON (FAVORITE_FOOD = NAT_CAT_NO)
+		  WHERE
+		       USER_ID = ?
+		   AND
+		       USER_PWD = ?
+		   AND
+		       STATUS = 'Y'
+	</entry>
+	
+	
+	<entry key="insertMember">
+		INSERT
+		  INTO
+		       MEMBER
+		       (
+		        USER_ID,
+		        USER_PWD,
+		        USER_NAME,
+		        EMAIL,
+		        ADDRESS,
+		        PHONE,
+		        NICKNAME,
+		        COOK_LEVEL,
+		        FAVORITE_FOOD
+		       )
+		VALUES
+		       (
+		        ?,
+		        ?,
+		        ?,
+		        ?,
+		        ?,
+		        ?,
+		        ?,
+		        ?,
+		        ?
+		       )
+	</entry>
+	
+	<entry key="updateMember">
+		UPDATE 
+		       MEMBER M
+		   SET 
+		       USER_NAME = ?, 
+		       EMAIL = ?, 
+		       ADDRESS = ?, 
+		       PHONE = ?,
+		       NICKNAME = ?, 
+		       COOK_LEVEL = ?, 
+		       MODIFY_DATE = SYSDATE,
+		       FAVORITE_FOOD =?
+		 WHERE 
+		       USER_ID = ? AND STATUS = 'Y'
+	</entry>
+	
+	<entry key="selectMember">
+			SELECT 
+			       USER_ID,
+			       USER_PWD,
+			       USER_NAME,
+			       EMAIL,
+			       ADDRESS,
+			       PHONE,
+			       NICKNAME,
+			       COOK_LEVEL,
+			       CREATE_DATE,
+			       MODIFY_DATE,
+			       STATUS,
+			       NAT_VALUE
+			  FROM
+			       MEMBER
+			  JOIN 
+			  	   NAT_CATEGORY ON (FAVORITE_FOOD = NAT_CAT_NO)
+			  WHERE
+			       USER_ID = ?
+			  AND
+			  	   STATUS = 'Y'
+	</entry> 
+	
+	<entry key="selectName">
+			SELECT USER_NAME 
+			FROM MEMBER;
+	</entry>
+	
+	<entry key="natCategory">
+			SELECT 
+					NAT_CAT_NO, 
+					NAT_VALUE
+			FROM 
+					NAT_CATEGORY
+	</entry>
+	
+	<entry key="updatePwdMember">
+		UPDATE 
+			   MEMBER 
+		   SET 
+		       USER_PWD = ?, 
+		       MODIFY_DATE = SYSDATE
+         WHERE 
+               USER_PWD = ? 
+           AND 
+               USER_ID = ?
+	</entry>
+	
+	
+	<entry key="deleteMember">
+		UPDATE 
+		       MEMBER 
+		   SET 
+		       STATUS='N', 
+		       MODIFY_DATE = SYSDATE
+ 		 WHERE 
+ 		       USER_ID = ? AND USER_PWD = ?
+	</entry>
+	
+	<entry key="idCheck">
+		SELECT COUNT(*)
+		  FROM MEMBER
+		 WHERE USER_ID = ?
+	</entry>
+	
+	<entry key="nickNameCheck">
+		SELECT COUNT(*)
+		  FROM MEMBER
+		 WHERE NICKNAME = ?
+	</entry>
+	
+	<entry key="emailCheck">
+		SELECT COUNT(*)
+		  FROM MEMBER
+		 WHERE EMAIL = ?
+	</entry>
+	
+	<entry key="selectReviewCount">
+		SELECT COUNT(*) COUNT
+		  FROM REVIEW
+		 WHERE STATUS='Y'
+		 AND RV_WRITER = ?
+	</entry>
+	
+	<entry key="selectReview">
+		SELECT * 
+		  FROM (SELECT ROWNUM RNUM, A.*
+		          FROM (SELECT RV_NO, RV_TITLE, RV_CONTENT, R.CREATE_DATE
+		                  FROM REVIEW R
+		                  WHERE RV_WRITER = ?
+		                  AND R.STATUS = 'Y'
+		                 ORDER BY CREATE_DATE DESC) A)
+		 WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	
+	<entry key="selectMyProductQnaCount">
+		SELECT COUNT(*) COUNT
+		  FROM QNA
+		 WHERE STATUS='Y'
+		   AND QNA_WRITER= ?
+	</entry>
+		
+	<entry key="selectMyProductQna">
+		SELECT * 
+		  FROM (SELECT ROWNUM RNUM, A.*
+		          FROM (SELECT QNA_NO, QNA_TITLE, QNA_CONTENT, Q.CREATE_DATE
+		                  FROM QNA Q
+		                  WHERE QNA_WRITER = ?
+		                   AND Q.STATUS = 'Y'
+		                 ORDER BY CREATE_DATE DESC) A)
+		 WHERE RNUM BETWEEN ? AND ?
+	
+	</entry>
+	
+	
+	<entry key="selectMyLikeRecipeCount">
+		SELECT COUNT(*) COUNT
+		FROM RECIPE
+		JOIN "LIKE" USING(PE_NO)
+		WHERE PE_STATUS='Y'
+		AND LIKE_STATUS ='Y'
+		AND USER_ID = ?
+	</entry>
+	
+	
+	<entry key ="myLikeRecipe">
+		SELECT * 
+			FROM ( SELECT ROWNUM RNUM, A.*
+    				FROM (  SELECT BOARD_TYPE, PE_TITLE, NAT_VALUE, PE_CREATE_DATE
+        					FROM RECIPE
+					        JOIN NAT_CATEGORY USING (NAT_CAT_NO)
+					        JOIN "LIKE" USING(PE_NO)
+					        WHERE PE_STATUS = 'Y'
+					          AND LIKE_STATUS ='Y'
+					          AND USER_ID =?
+					        ORDER BY PE_CREATE_DATE DESC)A)
+					WHERE RNUM BETWEEN ? AND ?
+							
+	</entry>
+	
+	<entry key="selectMemberListCount">
+		SELECT COUNT(*) COUNT
+		FROM Member
+	</entry>
+	
+	<entry key="memberList">
+		SELECT * 
+		  FROM (SELECT ROWNUM RNUM, A.*
+		          FROM (SELECT USER_ID, USER_PWD, USER_NAME, EMAIL, ADDRESS, PHONE, NICKNAME, CREATE_DATE, STATUS
+		                  FROM MEMBER
+		                 ORDER BY CREATE_DATE DESC) A)
+		 WHERE RNUM BETWEEN ? AND ?
+	
+	</entry>
+	
+	<entry key="findId">
+		SELECT *
+		FROM MEMBER
+		WHERE USER_NAME=?
+		AND PHONE =?
+	
+	</entry>
+	
+	<entry key="findPwd">
+		SELECT *
+		FROM MEMBER
+		WHERE USER_ID =? 
+		AND	USER_NAME=?
+		AND PHONE =?
+	
+	</entry>
+	
+
+</properties>

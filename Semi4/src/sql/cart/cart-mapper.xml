@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>장바구니 쿼리문</comment>
+	
+	<entry key="insertCart">
+	INSERT 
+	INTO 
+	CART(CART_NO,
+	 	 CART_AMOUNT,
+	  	 USER_ID,
+	     PRO_NO)
+	 VALUES
+	 	(SEQ_CART_NO.NEXTVAL, ?, ?, ?)
+	
+    </entry>
+    
+    <entry key="selectAllCartList">
+    	SELECT CART_NO, CART_AMOUNT, CART_STATUS, USER_ID, PRO_NO, PR_NAME, PR_PRICE
+    	 FROM CART
+         JOIN PRODUCT ON (PRO_NO = PR_NO)
+    	 WHERE USER_ID = ?
+    	   AND ORDER_STATUS = 'N'
+    	   AND CART_STATUS = 'Y'
+           
+    </entry>
+    
+    <entry key="CartDelete">
+	    UPDATE CART 
+	  	  SET CART_STATUS = 'N'
+	 	 WHERE CART_NO = ?
+    </entry>
+    
+    <entry key="QuantityUpdate">
+    	UPDATE CART
+   		   SET CART_AMOUNT = ?
+		 WHERE CART_NO = ?
+    </entry>
+    
+    <entry key="CartCheckedItem">
+		UPDATE CART
+		  SET ORDER_STATUS = 'Y'
+		  , CART_STATUS = 'N'
+          , CART_AMOUNT = ?
+		WHERE CART_NO = ?
+    </entry>
+    
+    <entry key="selectProductAttachment">
+   		SELECT FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH, PRODUCT_NO
+		  FROM ATTACHMENT
+		 WHERE PRODUCT_NO = ?
+		   AND FILE_LEVEL = 1
+    </entry>
+    
+    <entry key="SelectOrderedCart">
+       SELECT CART_NO, CART_AMOUNT, CART_STATUS, USER_ID, PRO_NO, PR_NAME, PR_PRICE
+    	 FROM CART
+         JOIN PRODUCT ON (PRO_NO = PR_NO)
+    	 WHERE CART_NO = ?
+    	   AND ORDER_STATUS = 'Y'
+    </entry>
+    
+    
+    <entry key="MakeOrderNo">
+		SELECT SEQ_ORDER_NO.NEXTVAL A FROM DUAL
+	</entry>
+    
+	<entry key="InsertOrder">
+		INSERT INTO ORDERTABLE
+        VALUES (SEQ_ORDER_NO.NEXTVAL, ?, ?, ?, SYSDATE, DEFAULT, ?)
+	</entry>
+
+</properties>

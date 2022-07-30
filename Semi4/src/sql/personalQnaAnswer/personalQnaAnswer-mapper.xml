@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>1대1문의 답변 쿼리문</comment>
+	
+	<entry key="insertPqnaAs">
+	INSERT INTO
+			PQNA_ANSWER
+			(
+			PQNA_NO,
+	 		PQNA_CONTENT
+	 		)
+	 VALUES 
+	 		(
+	 		?,
+	 		?
+	 		)
+	
+	</entry>
+	
+	<entry key="selectPqnaAs">
+	SELECT
+           PQNA_NO,
+           PQNA_WRITER,
+           PQNA_CONTENT,
+           CREATE_DATE,
+           MODIFY_DATE,
+           STATUS
+      FROM
+          PQNA_ANSWER
+      WHERE
+         PQNA_NO = ?
+      AND
+         STATUS = 'Y'
+	</entry>
+	
+	<entry key="selectPqnaAsList">
+		SELECT
+			  PA.PQNA_NO,
+			  PA.PQNA_WRITER,
+			  PA.PQNA_CONTENT,
+			  PA.CREATE_DATE,
+			  PA.MODIFY_DATE,
+			  PA.STATUS
+		FROM
+			 PQNA_ANSWER  PA
+		JOIN
+			PQNA P
+		  ON
+		  	(P.PQNA_NO = PA.PQNA_NO)
+		WHERE
+			PA.STATUS = 'Y'
+			
+	</entry>
+	
+	<entry key="updatePqnaAs">
+	</entry>
+	
+	<entry key="deletePqnaAs">
+		UPDATE
+			 PQNA_ANSWER
+		  SET
+		  	 STATUS = 'N'
+		 WHERE
+		 	 PQNA_NO = ?
+	</entry>
+	
+	
+    
+
+
+</properties>

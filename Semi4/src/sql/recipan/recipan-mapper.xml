@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>recipan-mapper.xml</comment>
+	
+	<entry key="selectProCategoryList">
+		SELECT PRO_CAT_NO, CATE_VALUE FROM PRO_CATEGORY
+	</entry>
+	<entry key="selectKindCategoryList">
+		SELECT KIND_CAT_NO, CATE_VALUE FROM KIND_CATEGORY
+	</entry>
+	<entry key="selectNatCategoryList">
+		SELECT NAT_CAT_NO, NAT_VALUE FROM NAT_CATEGORY
+	</entry>
+	
+	
+	
+	<entry key = "insertRecipan">
+		INSERT INTO RECIPE 
+            (PE_NO, 
+            PE_TITLE, 
+            PE_INTRODUCE, 
+            PE_WRITER, 
+            PE_FOOD_AMOUNT, 
+            PE_COOK_TIME, 
+            PE_COOK_LEVEL,              
+            BOARD_TYPE, 
+            NAT_CAT_NO, 
+            KIND_CAT_NO, 
+            PRO_CAT_NO)
+VALUES      
+            (SEQ_PE_NO.NEXTVAL,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            2,
+            ?,
+            ?,
+            ?)
+	</entry>
+	
+	<entry key = "insertRecipanProduct">
+		INSERT INTO RECIPE_PRODUCT(PE_NO, PRO_NAME, PRO_AMOUNT) 
+            VALUES(SEQ_PE_NO.CURRVAL, ?, ?)
+	</entry>
+
+	<entry key = "insertRecipanSauce">
+		INSERT INTO RECIPE_SAUCE (PE_NO, SAUCE_NAME, SAUCE_AMOUNT) 
+            VALUES(SEQ_PE_NO.CURRVAL, ?, ?)
+	</entry>
+	<entry key = "insertRecipanCookStep">
+		INSERT INTO RECIPE_COOK_STEP (STEP_NO, PE_NO, STEP_COOKNO,STEP_CONTENT) 
+            VALUES (SEQ_STEP_NO.NEXTVAL,SEQ_PE_NO.CURRVAL,?,?)
+	</entry>
+	<entry key = "insertRecipanAttachment">
+		INSERT INTO ATTACHMENT (FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH ,FILE_LEVEL ,PE_NO, STEP_NO)
+                 VALUES(SEQ_FILE_NO.NEXTVAL, ?, ?, ?, ?, SEQ_PE_NO.CURRVAL, ?)
+	</entry>
+	<entry key = "updateFormInsertRecipanAttachment">
+		INSERT INTO ATTACHMENT (FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH ,FILE_LEVEL ,PE_NO, STEP_NO)
+                 VALUES(SEQ_FILE_NO.NEXTVAL, ?, ?, ?, ?, ?, ?)
+	</entry>
+	<entry key = "selectListCount">
+		SELECT NAT_CAT_NO, KIND_CAT_NO, PRO_CAT_NO
+		FROM RECIPE
+		WHERE PE_STATUS = 'Y'
+	</entry>
+	
+	<entry  key = "selectList">
+		SELECT *
+		FROM(SELECT ROWNUM RNUM, A.*
+		    FROM (SELECT PE_NO, PE_TITLE, PE_INTRODUCE, NICKNAME, FILE_PATH||CHANGE_NAME TITLEIMG, LIKE_STATUS, PRO_CAT_NO, KIND_CAT_NO, NAT_CAT_NO
+				  FROM RECIPE
+				  JOIN ATTACHMENT USING (PE_NO)
+				  JOIN MEMBER ON (MEMBER.USER_ID = PE_WRITER)
+				  LEFT JOIN "LIKE" USING (PE_NO)
+				  WHERE BOARD_TYPE = 2
+				  AND PE_STATUS = 'Y'
+				  AND FILE_LEVEL = 1 ORDER BY ? DESC) A)
+		WHERE RNUM BETWEEN ? AND ?
+		ORDER BY RNUM DESC
+	</entry>
+	<entry key = "likeRecipan">
+		UPDATE RECIPE SET PE_LIKECOUNT =  PE_LIKECOUNT + 1 WHERE PE_NO = ? AND PE_STATUS = 'Y' AND BOARD_TYPE = 2
+	</entry>
+	<entry key = "likeCancelRecipan">
+		UPDATE RECIPE SET PE_LIKECOUNT =  PE_LIKECOUNT - 1 WHERE PE_NO = ? AND PE_STATUS = 'Y' AND BOARD_TYPE = 2
+	</entry>
+	
+	
+	
+	<entry key = "likeRecipanMember">
+		INSERT INTO "LIKE" (USER_ID,PE_NO)VALUES(?,?)
+	</entry>
+	
+	<entry key = "likeUpdateRecipanMember">
+		UPDATE "LIKE" SET LIKE_STATUS = 'Y' WHERE USER_ID = ? AND PE_NO = ?
+	</entry>
+	
+	<entry key = "likeCancelRecipanMember">
+		UPDATE "LIKE" SET LIKE_STATUS = 'N' WHERE USER_ID = ? AND PE_NO = ?
+	</entry>
+	
+	
+	<entry key="hasLikeRecipan">
+		SELECT *
+		FROM "LIKE"
+		WHERE PE_NO = ? AND USER_ID = ?
+	</entry>
+	<entry key ="selectRecipan">
+		SELECT PE_TITLE, PE_INTRODUCE, PE_WRITER, PE_FOOD_AMOUNT, PE_COOK_TIME, PE_COOK_LEVEL, PE_LIKECOUNT, FILE_PATH||CHANGE_NAME TITLEIMG,NAT_CAT_NO,KIND_CAT_NO,PRO_CAT_NO
+		FROM RECIPE
+		JOIN ATTACHMENT USING (PE_NO)
+		WHERE PE_STATUS = 'Y' AND PE_NO = ? AND FILE_LEVEL = 1
+	</entry>
+	
+	<entry key = "selectRecipanPro">
+		SELECT PRO_NAME, PRO_AMOUNT
+		FROM RECIPE_PRODUCT
+		WHERE PE_NO = ?
+	</entry>
+	<entry key = "selectRecipanSau">
+		SELECT SAUCE_NAME, SAUCE_AMOUNT
+		FROM RECIPE_SAUCE
+		WHERE PE_NO = ?
+	</entry>
+	<entry key = "selectRecipanCookStep">
+		SELECT STEP_COOKNO, STEP_CONTENT
+		FROM RECIPE_COOK_STEP
+		WHERE PE_NO = ?
+		ORDER BY STEP_COOKNO ASC
+	</entry>
+	<entry key = "selectRecipanCookStepImg">
+		SELECT FILE_PATH||CHANGE_NAME STEPIMG
+		FROM ATTACHMENT
+		WHERE PE_NO = ? AND FILE_LEVEL = 2
+		ORDER BY FILE_NO ASC
+	</entry>
+	<entry key = "selectComment">
+		SELECT COMMENT_CONTENT, COMMENT_WRITER, CREATE_DATE
+		FROM "COMMENT"
+		WHERE REF_PE_NO = ?
+		ORDER BY CREATE_DATE ASC
+	</entry>
+	<entry key = "insertComment">
+		INSERT INTO "COMMENT" 
+		(COMMENT_NO, COMMENT_CONTENT, COMMENT_WRITER, REF_PE_NO) 
+		VALUES(SEQ_COMMENT_NO.NEXTVAL, ?, ?, ?)
+	</entry>
+	<entry key="myRecipeSelect">
+	SELECT PE_NO, PE_TITLE, PE_INTRODUCE, FILE_PATH||CHANGE_NAME TITLEIMG
+	
+	FROM RECIPE
+	JOIN ATTACHMENT USING (PE_NO)
+	JOIN MEMBER ON (MEMBER.USER_ID = PE_WRITER)
+	WHERE BOARD_TYPE = 2
+	AND PE_STATUS = 'Y'
+	AND FILE_LEVEL = 1 
+	AND MEMBER.USER_ID = ?
+	ORDER BY PE_NO ASC
+	</entry>
+	<entry key = "selectOriginImg">
+		SELECT CHANGE_NAME
+		FROM ATTACHMENT
+		WHERE PE_NO = ? AND FILE_LEVEL = 1
+        
+	</entry>
+	<entry key = "selectOriginImgFileNo">
+		SELECT FILE_NO
+		FROM ATTACHMENT
+		WHERE PE_NO = ? AND FILE_LEVEL = 1        
+	</entry>
+	<entry key = "selectCookStepImg">
+		SELECT CHANGE_NAME
+		FROM ATTACHMENT
+		WHERE PE_NO = ? AND FILE_LEVEL = 2
+        ORDER BY STEP_NO ASC
+	</entry>
+	<entry key = "selectCookStepImgFileNo">
+		SELECT FILE_NO
+		FROM ATTACHMENT
+		WHERE PE_NO = ? AND FILE_LEVEL = 2
+        ORDER BY STEP_NO ASC
+	</entry>
+	<entry key = "deleteRecipanPro">
+		DELETE 
+		FROM RECIPE_PRODUCT
+		WHERE PE_NO = ?
+	</entry>
+	<entry key = "deleteRecipanSau">
+		DELETE 
+		FROM RECIPE_SAUCE
+		WHERE PE_NO = ?
+	</entry>
+	<entry key = "deleteRecipanCookStep">
+		DELETE 
+		FROM RECIPE_COOK_STEP
+		WHERE PE_NO = ?
+	</entry>
+	<entry key = "deleteRecipanAttachment">
+		DELETE 
+		FROM ATTACHMENT
+		WHERE FILE_NO = ?
+	</entry>
+	<entry key = "updateRecipan">
+	UPDATE RECIPE 
+	SET
+	PE_TITLE = ?, 
+	PE_INTRODUCE = ? , 
+	PE_FOOD_AMOUNT = ?, 
+	PE_COOK_TIME = ?, 
+	PE_COOK_LEVEL = ?, 
+	NAT_CAT_NO = ?, 
+	KIND_CAT_NO = ?, 
+	PRO_CAT_NO = ?, 
+	PE_MODIFY_DATE = SYSDATE
+	WHERE PE_NO = ? AND BOARD_TYPE=2
+
+	</entry>
+	
+	
+	
+	
+	<entry key = "updateRecipanProduct">
+		INSERT INTO RECIPE_PRODUCT(PE_NO, PRO_NAME, PRO_AMOUNT) 
+            VALUES(?, ?, ?)
+	</entry>
+
+	<entry key = "updateRecipanSauce">
+		INSERT INTO RECIPE_SAUCE (PE_NO, SAUCE_NAME, SAUCE_AMOUNT) 
+            VALUES(?, ?, ?)
+	</entry>
+	<entry key = "updateRecipanCookStep">
+		INSERT INTO RECIPE_COOK_STEP (STEP_NO, PE_NO, STEP_COOKNO,STEP_CONTENT) 
+            VALUES (SEQ_STEP_NO.NEXTVAL,?,?,?)
+	</entry>
+	<entry key = "updateAttachment">
+			UPDATE ATTACHMENT
+						 
+			SET
+			ORIGIN_NAME = ?,
+			CHANGE_NAME = ?,
+			FILE_PATH = ?		
+							
+			WHERE FILE_NO = ?		
+	</entry>
+	<entry key ="deleteRecipan">
+	UPDATE RECIPE
+	SET PE_STATUS = 'N'
+	WHERE PE_NO = ?
+	</entry>
+	
+	<entry key ="deleteRecipanAttachmentThumbnail">
+		DELETE 
+		FROM ATTACHMENT
+		WHERE PE_NO = ? AND FILE_LEVEL = 1
+	</entry>
+	<entry key = "selectLike">
+		SELECT PE_NO, LIKE_STATUS
+		FROM "LIKE"
+		WHERE USER_ID = ?
+	</entry>
+	
+</properties>

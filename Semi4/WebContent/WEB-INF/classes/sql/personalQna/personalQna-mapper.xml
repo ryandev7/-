@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+	<comment>1대1문의 쿼리문</comment>
+	
+	<entry key="insertPqna">
+	INSERT INTO
+			PQNA
+			(
+			PQNA_NO,
+	 		PQNA_TITLE,
+	 		PQNA_CONTENT,
+	 		PQNA_WRITER
+	 		)
+	 VALUES 
+	 		(
+	 		SEQ_PQNA_NO.NEXTVAL,
+	 		?,
+	 		?,
+	 		?
+	 		)
+	
+	</entry>
+	
+	<entry key="selectPqnaList">
+	      SELECT *
+		FROM(SELECT ROWNUM RNUM, A.*
+	    FROM (SELECT
+			PQNA_NO,
+			PQNA_TITLE,
+			PQNA_CONTENT,
+			P.STATUS,
+			P.CREATE_DATE,
+			P.MODIFY_DATE,
+			PQNA_ANSWER_ST,
+			PQNA_WRITER
+		FROM
+			PQNA P
+		JOIN
+			MEMBER ON(PQNA_WRITER = USER_ID)
+	   WHERE
+	   		P.STATUS = 'Y'
+	   	ORDER BY PQNA_NO DESC) A)
+		WHERE RNUM BETWEEN ? AND ?
+		
+	</entry>
+	
+	<entry key="selectUserPqnaList">
+		SELECT *
+		FROM(SELECT ROWNUM RNUM, A.*
+	    FROM (SELECT
+			PQNA_NO,
+			PQNA_TITLE,
+			PQNA_CONTENT,
+			P.STATUS,
+			P.CREATE_DATE,
+			P.MODIFY_DATE,
+			PQNA_ANSWER_ST,
+			PQNA_WRITER
+		FROM
+			PQNA P
+		JOIN
+			MEMBER ON(PQNA_WRITER = USER_ID)
+	   WHERE
+	   		P.STATUS = 'Y'
+	   	AND
+	   		PQNA_WRITER = ?
+			ORDER BY P.PQNA_NO DESC
+	   		) A)
+		WHERE RNUM BETWEEN ? AND ?
+	</entry>
+	<!-- 삭제된 문의는 카운트하면 안됨 -->
+	<entry key = "selectListCount">
+		SELECT COUNT(*) COUNT
+		FROM 
+			PQNA
+		WHERE
+			STATUS = 'Y'
+	</entry>
+	<!-- 삭제된 문의는 카운트하면 안됨 -->
+	<entry key = "selectUserListCount">
+		SELECT COUNT(*) COUNT
+		FROM 
+			PQNA
+		WHERE
+			PQNA_WRITER = ?
+		AND
+			STATUS = 'Y'
+	</entry>
+	
+	<entry key="updatePqna">
+	UPDATE
+		  PQNA
+	  SET
+		 PQNA_TITLE = ?,
+		 PQNA_CONTENT = ?
+	WHERE
+		PQNA_NO = ?
+	AND
+		STATUS = 'Y'		
+	</entry>
+	
+	<entry key="deletePqna">
+	UPDATE 
+			PQNA 
+		SET 
+			STATUS = 'N' 
+	  WHERE 
+	  		PQNA_NO = ?
+	</entry>
+	
+	<entry key="selectPqna">
+	SELECT
+			PQNA_NO,
+			PQNA_TITLE,
+			PQNA_CONTENT,
+			P.CREATE_DATE,
+			PQNA_ANSWER_ST,
+			PQNA_WRITER
+		FROM
+			PQNA P
+		JOIN
+			MEMBER ON(PQNA_WRITER = USER_ID)
+	   WHERE
+	   		PQNA_NO = ?
+	  	AND
+	  		P.STATUS = 'Y'
+	</entry>
+	
+	<entry key="updateAsStatus">
+	UPDATE
+		PQNA
+	SET
+		PQNA_ANSWER_ST = 'Y'
+	WHERE
+		PQNA_NO = ?
+	</entry>
+	
+
+	
+		
+    
+
+
+</properties>
